@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.squareup.picasso.Picasso;
 
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -360,7 +362,8 @@ public class MainActivity extends AppCompatActivity implements OnProductSelected
 
         //samo pozovemo metodu kada je potrebno da se ona izvrsi i ne moramo da vodimo vise racuna
         //o pozadinskom desavanju
-        getArtistByName("Metallica");
+        //getArtistByName("Metallica");
+        inputDialogShow();
     }
 
     /**
@@ -395,12 +398,21 @@ public class MainActivity extends AppCompatActivity implements OnProductSelected
                     // u koji imgeview objekat se ucitaca i u kojoj aktivnosti se posao odvija
                     //Picasso.with(MainActivity.this).load(putanja_do_slike).into(imageView_u_koji_zelimo_da_smestimo_sliku);
 
-					String evs = "";
-					for(Event e : events){
-						evs+=""+e.getVenue().getName()+"\n";
-					}
-					
-					Toast.makeText(MainActivity.this, evs, Toast.LENGTH_SHORT).show();
+                    if (events.size() > 0){
+                        //List<String> data = new ArrayList<String>();
+                        String[] data = new String[events.size()];
+
+                        for (int i=0; i<events.size();i++){
+                            data[i] = events.get(i).getVenue().getName()+":"+events.get(i).getDatetime();
+                        }
+
+                        Intent intent = new Intent(MainActivity.this, ResultActivity.class);
+                        intent.putExtra("data", data);
+                        startActivity(intent);
+                        Toast.makeText(MainActivity.this, "Prikaz eventova", Toast.LENGTH_SHORT).show();
+                    }else {
+                        Toast.makeText(MainActivity.this, "Nema event-ova", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
@@ -410,6 +422,35 @@ public class MainActivity extends AppCompatActivity implements OnProductSelected
                 Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void inputDialogShow(){
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.input_dialog);
+
+        final EditText input_name = (EditText)dialog.findViewById(R.id.input_name);
+
+        Button get_data = (Button)dialog.findViewById(R.id.get_data);
+        get_data.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String data = input_name.getText().toString();
+
+                //Ako naziv izvodjaca sadrzi razmak zameniti sa %20
+                //%20 je nacin da se u putanji na internetu predstavi razmak
+//                if (data.contains(" ")){
+//                    data = data.replace(" ", "%20");
+//                }
+
+                Toast.makeText(MainActivity.this, data, Toast.LENGTH_SHORT).show();
+
+                getArtistByName(data);
+
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 
 }
