@@ -23,8 +23,8 @@
             android:icon="@mipmap/ic_launcher"
             android:label="@string/activity_settings_name"
             android:parentActivityName=".activities.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".activities.ResultActivity"></activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".activities.ResultActivity"/>
     </application>
 
 </manifest>
